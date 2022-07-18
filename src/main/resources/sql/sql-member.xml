@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.teamproject.smiledoor.mapper.MemberMapper">
+
+    <select id="selectUserList" resultType="com.teamproject.smiledoor.dto.UserDto">
+        <![CDATA[
+            SELECT
+                member_id, member_pw, member_name, member_email, birth_day, phone, reg_date
+            FROM
+                member
+            WHERE
+                admin_yn= 'N'
+        ]]>
+    </select>
+
+    <insert id="joinMember" parameterType="com.teamproject.smiledoor.dto.UserDto">
+        <![CDATA[
+        INSERT INTO
+            member (member_id, member_pw, member_name, member_email, birth_day, phone, reg_date)
+        VALUES
+            (#{memberId}, #{memberPw}, #{memberName}, #{memberEmail}, #{birthDay}, #{phone}, now())
+        ]]>
+    </insert>
+
+    <select id="checkid" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM member
+        WHERE
+            member_id = #{memberId}
+    </select>
+
+    <select id="idCheck" parameterType="String" resultType="int">
+        SELECT COUNT(member_id) FROM member WHERE member_id= #{memberId}
+    </select>
+
+</mapper>

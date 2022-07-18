@@ -1,0 +1,123 @@
+#Slider{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+
+}
+
+#login>a{
+    font-family: "CircularXXWeb-Medium";
+    text-align: center;
+    width: 130px;
+    font-size: 22px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 25px;
+    letter-spacing: normal;
+    padding: 1.3rem 0.3rem;
+    color: white;
+    text-decoration: none;
+}
+#login:hover>a{
+    color: black;
+}
+
+
+
+.logo{
+    font-family: "CircularXXWeb-Medium";
+    text-align: center;
+    width: 150px;
+    font-size: 32px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 25px;
+    letter-spacing: normal;
+    padding: 1.3rem 1rem;
+    color: white;
+    text-decoration: none;
+}
+
+.kv-video{
+    position: absolute;
+    width: 100%;
+    min-height: 30vw;
+}
+.carousel{
+    object-fit: cover;
+}
+.carousel-inner{
+    height: 100vh;
+}
+
+.nav-item{
+    font-family: "CircularXXWeb-Medium";
+    text-align: center;
+    width: 150px;
+    font-size: 16px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 25px;
+    letter-spacing: normal;
+
+}
+.link{
+    display: block;
+    padding: 1.3rem 1rem;
+    color: white;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+.link:hover{
+    display: block;
+    padding: 1.3rem 1rem;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+
+#Slider:hover{
+    background-color: white;
+    transition: background-color 1s ease-in-out;
+}
+#Slider:hover .link{
+    color: black;
+}
+#Slider:hover .logo{
+    color: black;
+}
+.link>ul>li{
+    color: black;
+    transition: color 5s ease-in-out;
+}
+
+.hr{
+    display: none;
+    margin: 0px;
+}
+
+.nav-item>ul>li{
+    text-align: center;
+
+    display: none;
+    font-weight: 900;
+}
+
+
+
+.nav-item>ul{
+    padding: 0;
+}
+
+#Slider:hover .nav-item>ul>li{
+    display: block;
+}
+#Slider:hover .hr{
+    display: block;
+}
+
