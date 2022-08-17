@@ -1,5 +1,6 @@
 package com.teamproject.smiledoor.mapper;
 
+import com.github.pagehelper.Page;
 import com.teamproject.smiledoor.dto.BoardDto;
 import com.teamproject.smiledoor.dto.BoardFileDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface BoardMapper {
 
-    List<BoardDto> selectBoardList() throws Exception;
+    Page<BoardDto> getBoardListPage() throws Exception;
 
     void insertBoard(BoardDto board) throws Exception;
 
@@ -22,10 +23,11 @@ public interface BoardMapper {
 
     void deleteBoard(@Param("boardNum") int boardNum) throws Exception;
 
-
     void insertBoardFileList(List<BoardFileDto> fileList) throws Exception;
 
     List<BoardFileDto> selectBoardFileList(int boardNum) throws Exception;
 
     BoardFileDto selectBoardFileInfo(@Param("idx") int idx, @Param("boardNum") int boardNum) throws Exception;
+
+    void deleteBoardFile(@Param("idx") int idx, @Param("boardNum") int boardNum) throws Exception;
 }

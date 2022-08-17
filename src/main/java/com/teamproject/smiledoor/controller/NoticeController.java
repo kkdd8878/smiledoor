@@ -1,6 +1,7 @@
 package com.teamproject.smiledoor.controller;
 
 
+import com.github.pagehelper.PageInfo;
 import com.teamproject.smiledoor.dto.NoticeDto;
 import com.teamproject.smiledoor.dto.UserDto;
 import com.teamproject.smiledoor.service.NoticeService;
@@ -22,10 +23,17 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @RequestMapping("/notice/noticeList")
-    public ModelAndView openNoticeList() throws Exception{
-        ModelAndView mv = new ModelAndView("/notice/noticeList");
+    public ModelAndView openNoticeList(@RequestParam(required = false, defaultValue = "1") int pageNum,HttpServletRequest request) throws Exception{
+        ModelAndView mv = new ModelAndView("notice/noticeList");
 
-        List<NoticeDto> dataList = noticeService.selectNoticeList();
+        HttpSession session = request.getSession();
+
+        UserDto user = new UserDto(); // 아마도 로그인 서비스 생기면 UserDto 로 변경하면됨 변수도 그걸로
+        user.setMemberId((String) session.getAttribute("memberId"));
+        user.setAdminYn((String) session.getAttribute("adminYn"));
+        mv.addObject("user", user);
+
+        PageInfo<NoticeDto> dataList = new PageInfo<>(noticeService.getNoticeListPage(pageNum),10);
 
         mv.addObject("dataList", dataList);
 
@@ -34,7 +42,7 @@ public class NoticeController {
 
     @RequestMapping("/notice/WriteBoard")
     public ModelAndView writeBoard(HttpServletRequest request) throws Exception{
-        ModelAndView mv = new ModelAndView("/notice/noticeWrite");
+        ModelAndView mv = new ModelAndView("notice/noticeWrite");
 
         HttpSession session = request.getSession();
 
@@ -52,9 +60,14 @@ public class NoticeController {
     }
 
     @RequestMapping("/notice/noticeDetail")
-    public ModelAndView boardDetail(@RequestParam("noticeNum") int noticeNum) throws Exception{
-        ModelAndView mv = new ModelAndView("/notice/noticeDetail");
+    public ModelAndView boardDetail(@RequestParam("noticeNum") int noticeNum,HttpServletRequest request) throws Exception{
+        ModelAndView mv = new ModelAndView("notice/noticeDetail");
 
+        HttpSession session = request.getSession();
+
+        UserDto user = new UserDto();
+        user.setAdminYn((String) session.getAttribute("adminYn"));
+        mv.addObject("user", user);
         NoticeDto notice = noticeService.selectNoticeDetail(noticeNum);
         mv.addObject("notice",notice);
 

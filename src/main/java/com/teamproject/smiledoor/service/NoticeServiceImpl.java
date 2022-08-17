@@ -1,6 +1,9 @@
 package com.teamproject.smiledoor.service;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.teamproject.smiledoor.dto.NoticeDto;
+import com.teamproject.smiledoor.dto.UserDto;
 import com.teamproject.smiledoor.mapper.NoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +18,9 @@ public class NoticeServiceImpl implements NoticeService{
     private NoticeMapper noticeMapper;
 
     @Override
-    public List<NoticeDto> selectNoticeList() throws Exception {
-        return noticeMapper.selectNoticeList();
+    public Page<NoticeDto> getNoticeListPage(int pageNum) throws Exception {
+        PageHelper.startPage(pageNum, 10);
+        return noticeMapper.getNoticeListPage();
     }
 
     @Override
@@ -41,5 +45,7 @@ public class NoticeServiceImpl implements NoticeService{
     public void deleteBoard(int noticeNum) throws Exception {
         noticeMapper.deleteBoard(noticeNum);
     }
+
+
 
 }

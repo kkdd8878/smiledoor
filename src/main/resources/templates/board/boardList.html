@@ -4,18 +4,90 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Title</title>
-
+  <link rel="stylesheet" type="text/css" href="/css/Slider2.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
           crossorigin="anonymous"></script>
+  <!--jquery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!--slick-->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      //slick
+      $('.slider-div').slick({
+        infinite : true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        arrows:false,
+        draggable: true,
+      });
+    });
+  </script>
 </head>
 <body>
-<header class="container">
-  <div class="mt-4 p-5 bg-secondary bg-opacity-75 text-white rounded text-center">
-    <h1>부트스트랩을 게시판</h1>
-    <h3 class="text-danger">배너 위치</h3>
+<div id="Slider" class="d-flex flex-nowrap">
+  <div class="me-auto flex-nowrap">
+    <div class="logo" ><a href="/Main" style="text-decoration:none; color:black;" >Smiledoor</a></div>
+  </div>
+
+
+  <ul class="nav me-auto flex-nowrap">
+    <li class="nav-item">
+      <a class="link active" aria-current="page" href="/notice/noticeList">NOTICE</a>
+      <hr class="hr">
+      <ul>
+        <a href="/notice/noticeList">공지사항 </a>
+      </ul>
+    </li>
+    <li class="nav-item" th:if="${session.adminYn} == 'Y'">
+      <a class="link" href="/memberlist">MEMBERLIST</a>
+      <hr class="hr">
+    </li>
+    <li class="nav-item">
+      <a  class="link" href="/board/boardList">MEDIA</a>
+      <hr class="hr">
+      <ul>
+        <a href="/board/boardList">자유 게시판</a>
+      </ul>
+    </li>
+    <li class="nav-item">
+      <a class="link" href="/support/supportList">SUPPORT</a>
+      <hr class="hr">
+      <ul>
+        <a href="/support/supportList">고객센터</a>
+      </ul>
+    </li>
+    <li class="nav-item" th:if="${session.memberId} != null ">
+      <a  class="link" href="/myPage?memberId=" th:attrappend="href=${session.memberId}" th:text="MYINFO"></a>
+      <hr class="hr">
+      <ul>
+        <a href="/myPage?memberId=" th:attrappend="href=${session.memberId}">내 정보</a>
+      </ul>
+    </li>
+  </ul>
+
+  <div id="login" class="d-flex">
+    <a th:if="${session.memberId} == null" href="/login">login</a>
+    <a th:if="${session.memberId} == null" href="/registerMemberForm">register</a>
+    <th><a th:if="${session.memberId} !=null" th:text="|${session.memberId}님|" href="/myPage?memberId=" th:attrappend="href=${session.memberId}" ></a></th>
+    <th><a th:if="${session.memberId} !=null" href="/logout" class="btn btn-link">로그아웃</a></th>
+  </div>
+</div>
+
+
+<header class="container" style="margin-top: 100px">
+  <!--slick-->
+  <div class="slider-div"  >
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/vintage-g0491af600_1920.jpg" style="width:100%; height:250px;"></a></div>
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/banner-ga8c6de769_1920.jpg" style="width:100%; height:250px;"></a></div>
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/banner-g40a784e09_1920.jpg" style="width:100%; height:250px;"></a></div>
   </div>
 </header>
 
@@ -29,33 +101,50 @@
             <col width="15%">
             <col width="*">
             <col width="15%">
+            <col width="15%">
             <col width="20%">
           </colgroup>
           <thead>
           <tr class="text-center">
             <th>글번호</th>
             <th>제목</th>
+            <th>작성자</th>
             <th>조회수</th>
             <th>작성일</th>
           </tr>
           </thead>
           <tbody>
-          <tr class="text-center" th:if="${#lists.size(dataList)} > 0" th:each="item : ${dataList}">
+          <tr class="text-center" th:if="${#lists.size(dataList.getList())} > 0" th:each="item : ${dataList.getList()}">
             <td th:text="${item.boardNum}"></td>
-            <td class="text-start">
-              <a class="text-decoration-none" href="/board/boardDetail?boardNum=" th:attrappend="href=${item.boardNum}" th:text="${item.boardTitle}"></a>
+            <td class="text-center">
+              <a class="text-decoration-none text-dark" href="/board/boardDetail?boardNum=" th:attrappend="href=${item.boardNum}" th:text="${item.boardTitle}"></a>
             </td>
+            <td th:text="${item.memberId}"></td>
             <td th:text="${item.readCount}"></td>
             <td th:text="${item.regDate}"></td>
           </tr>
-          <tr th:unless="${#lists.size(dataList)} > 0">
+          <tr th:unless="${#lists.size(dataList.getList())} > 0">
             <td class="text-center" colspan="4">데이터가 없습니다.</td>
           </tr>
           </tbody>
         </table>
-        <div class="d-flex flex-row">
+        <div class="d-flex flex-row" th:if="${session.memberId} != NULL">
           <a class="btn btn-warning ms-auto" href="/board/WriteBoard" alt="글쓰기">글쓰기</a>
         </div>
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${dataList.getPrePage() == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/board/boardList(pageNum=${dataList.getPrePage()})}">Prev</a>
+            </li>
+            <!--                        #numbers.sequence(1,10) : 타임리프의 객체 중 하나로 숫자로 이루어진 배열을 생성 , 첫번쨰 매개변수의 수부터 두번째 매개변수의 수까지의 배열을 생성 -->
+            <li class="page-item" th:each="item : ${#numbers.sequence(dataList.getNavigateFirstPage(), dataList.getNavigateLastPage())}" th:classappend="${item == dataList.getPageNum()} ? 'active'">
+              <a class="page-link" th:text="${item}" th:href="@{/board/boardList(pageNum=${item})}"></a>
+            </li>
+            <li class="page-item" th:classappend="${dataList.getNextPage() == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/board/boardList(pageNum=${dataList.getNextPage()})}">Next</a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </article>
   </section>

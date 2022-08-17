@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <link rel="stylesheet" type="text/css" href="/css/Slider2.css">
     <style>
         h2 { text-align: center; padding : 20px; }
         .input-group-text { width: 140px; }
@@ -16,10 +16,24 @@
         div.submit-button { width: 200px; margin: auto; display: block; }
         .id_ok{color:#000; display: none; margin-bottom: 15px;}
         .id_already{color:#6A82FB; display: none; margin-bottom: 15px;}
-
+        .email_ok{color:#000; display: none; margin-bottom: 15px;}
+        .email_already{color:#6A82FB; display: none; margin-bottom: 15px;}
     </style>
 
     <script type="text/javascript">
+        let flagId = false;
+        let flagEmail = false;
+
+        $(document).ready(function() {
+            $("#memberId").on("blur", function() {
+                checkId();
+            });
+
+            $("#memberEmail").on("blur", function() {
+                checkEmail();
+            });
+        });
+
         function checkId(){
             var id = $('#memberId').val(); //id값이 "id"인 입력란의 값을 저장
             $.ajax({
@@ -30,66 +44,163 @@
                     if(cnt != 1){ //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디
                         $('.id_ok').css("display","inline-block");
                         $('.id_already').css("display", "none");
+                        flagId = true;
                     } else { // cnt가 1일 경우 -> 이미 존재하는 아이디
                         $('.id_already').css("display","inline-block");
                         $('.id_ok').css("display", "none");
+                        flagId = false;
                     }
+
+                    checkSuccess()
                 },
                 error:function(){
                     alert("에러입니다");
                 }
             });
-        };
+        }
+        function checkEmail(){
+            var email = $('#memberEmail').val(); //id값이 "id"인 입력란의 값을 저장
+            $.ajax({
+                url:'/emailCheck', //Controller에서 인식할 주소
+                type:'post', //POST 방식으로 전달
+                data:{memberEmail:email},
+                success:function(cnt1){
+                    if(cnt1 != 1){ //cnt가 1이 아니면(=0일 경우) -> 사용 가능한 아이디
+                        $('.email_ok').css("display","inline-block");
+                        $('.email_already').css("display", "none");
+                        flagEmail = true;
+                    } else { // cnt가 flagId1일 경우 -> 이미 존재하는 아이디
+                        $('.email_already').css("display","inline-block");
+                        $('.email_ok').css("display", "none");
+                        flagEmail = false;
+
+                    }
+
+                    checkSuccess()
+                },
+                error:function(){
+                    alert("에러입니다");
+                }
+            });
+        }
+        function checkSuccess(){
+            if (flagId == true && flagEmail == true) {
+                // 버튼 활성화
+                $('#join-button').removeAttr("disabled");
+            }
+            else {
+                // 비활성화
+                $('#join-button').attr('disabled', 'disabled');
+            }
+        }
+        $(function checkPw() {
+            $('#memberPw2').blur(function () {
+                if($('#memberPw').val() != $('#memberPw2').val()) {
+                    if($('#memberPw2').val() != '') {
+                        alert("비밀번호가 일치하지 않습니다.");
+                        $('#memberPw2').val('');
+                        $('#memberPw2').focus();
+                    }
+                }
+            })
+        })
     </script>
 </head>
 <body>
-<main class="container mt-5">
+<div id="Slider" class="d-flex flex-nowrap">
+    <div class="me-auto flex-nowrap">
+        <div class="logo" ><a href="Main" style="text-decoration:none; color:black;" >Smiledoor</a></div>
+    </div>
 
+
+    <ul class="nav me-auto flex-nowrap">
+        <li class="nav-item">
+            <a class="link active" aria-current="page" href="notice/noticeList">NOTICE</a>
+            <hr class="hr">
+            <ul>
+                <a href="notice/noticeList">공지사항 </a>
+            </ul>
+        </li>
+        <li class="nav-item" th:if="${session.adminYn} == 'Y'">
+            <a class="link" href="/memberlist">MEMBERLIST</a>
+            <hr class="hr">
+        </li>
+        <li class="nav-item">
+            <a  class="link" href="/board/boardList">MEDIA</a>
+            <hr class="hr">
+            <ul>
+                <a href="/board/boardList">자유 게시판</a>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="link" href="/support/supportList">SUPPORT</a>
+            <hr class="hr">
+            <ul>
+                <a href="/support/supportList">고객센터</a>
+            </ul>
+        </li>
+        <li class="nav-item" th:if="${session.memberId} != null ">
+            <a  class="link" href="myPage?memberId=" th:attrappend="href=${session.memberId}" th:text="MYINFO"></a>
+            <hr class="hr">
+            <ul>
+                <a href="myPage?memberId=" th:attrappend="href=${session.memberId}">내 정보</a>
+            </ul>
+        </li>
+    </ul>
+
+    <div id="login" class="d-flex">
+        <a th:if="${session.memberId} == null" href="login">login</a>
+        <a th:if="${session.memberId} == null" href="registerMemberForm">register</a>
+        <th><a th:if="${session.memberId} !=null" th:text="|${session.memberId}님|" href="myPage?memberId=" th:attrappend="href=${session.memberId}" ></a></th>
+        <th><a th:if="${session.memberId} !=null" href="logout" class="btn btn-link">로그아웃</a></th>
+    </div>
+</div>
+<main class="container p-5" style="margin-top: 100px">
     <h2>회원가입</h2>
     <div class="row">
         <div class="col-md-6 mx-auto">
             <form action="/join" method="post">
                 <div class="input-group mb-3 mt-3">
                     <span class="input-group-text">아이디</span>
-                    <input type="id" class="form-control" id = "memberId" name="memberId" placeholder="your id" autocomplete="username" required oninput = "checkId()" />
+<!--                    <input type="id" class="form-control" id = "memberId" name="memberId" placeholder="your id" autocomplete="username" required oninput = "checkSuccess()" />-->
+                    <input type="id" class="form-control" id = "memberId" name="memberId" placeholder="your id" autocomplete="username" required />
                 </div>
                 <span class="id_ok">사용 가능한 아이디입니다.</span>
                 <span class="id_already">누군가 이 아이디를 사용하고 있어요.</span>
-                <input type="hidden" name="decide_id" id="decide_id">
                 <!--                    <span id="decide" style="color:red">아이디 중복 여부를 확인해주세요.</span>-->
                 <div class="input-group mb-3">
                     <span class="input-group-text">비밀번호</span>
-                    <input type="password" class="form-control" id="member-pw" placeholder="" name="memberPw" required>
+                    <input type="password" class="form-control" id="memberPw" placeholder="" name="memberPw" required>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">비밀번호 재확인</span>
-                    <input type="password" class="form-control" id="re-pw" placeholder="" name="re-pw" required>
+                    <input type="password" class="form-control" id="memberPw2" placeholder="" name="memberPw2" required>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">이름</span>
-                    <input type="name" class="form-control" id="name" placeholder="" name="memberName">
+                    <input type="text" class="form-control" id="name" placeholder="" name="memberName" required>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">이메일</span>
-                    <input type="email" class="form-control" id="email" placeholder="" name="memberEmail">
+<!--                    <input type="email" class="form-control" id="memberEmail" placeholder="" name="memberEmail" required oninput = "checkSuccess()">-->
+                    <input type="email" class="form-control" id="memberEmail" placeholder="" name="memberEmail" required>
                 </div>
+                <span class="email_ok">사용 가능한 이메일입니다.</span>
+                <span class="email_already">누군가 이 이메일을 사용하고 있어요.</span>
                 <div class="input-group mb-3">
                     <span class="input-group-text">연락처</span>
-                    <input type="phone" class="form-control" id="phone" placeholder="(선택사항)" name="phone">
+                    <input type="text" class="form-control" id="phone" placeholder="(선택사항)" name="phone">
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">생년월일</span>
-                    <input type="birthday" class="form-control" id="birthday" placeholder="(선택사항)" name="birthDay">
+                    <input type="date" class="form-control" id="birthday" placeholder="(선택사항)" name="birthDay">
                 </div>
-                <div class="submit-button">
-                    <button type="submit" id="join-button" value="가입하기" class="btn btn-primary" >가입하기</button>
+                <div class="submit-button d-grid" id="join-div" >
+                    <button type="submit" id="join-button" value="가입하기" class="btn btn-primary" disabled>가입하기</button>
                 </div>
             </form>
         </div>
     </div>
 </main>
-
-
-
 </body>
 </html>

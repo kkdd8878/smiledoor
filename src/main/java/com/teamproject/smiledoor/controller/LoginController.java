@@ -1,5 +1,6 @@
 package com.teamproject.smiledoor.controller;
 
+import com.teamproject.smiledoor.dto.BoardDto;
 import com.teamproject.smiledoor.dto.UserDto;
 import com.teamproject.smiledoor.service.LoginService;
 import com.teamproject.smiledoor.service.MemberService;
@@ -20,6 +21,27 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    //ip 가져오기 메서드
+    public String getClientIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+
     @RequestMapping("/")
     public String index() throws Exception {
         return "index";
@@ -32,12 +54,13 @@ public class LoginController {
 
     // 세션에 정보 저장, 삭제
     @RequestMapping("/loginCheck")
-    public String loginCheck(@RequestParam("memberId") String memberId, @RequestParam("memberPw") String memberPw,
-                             HttpServletRequest request) throws Exception {
+    public String loginCheck(@RequestParam("memberId") String memberId, @RequestParam("memberPw") String memberPw,HttpServletRequest request) throws Exception {
         int count = loginService.selectUserInfoYn(memberId, memberPw);
         if (count == 1) {
             HttpSession session = request.getSession();
             session.setAttribute("memberId", memberId);
+            session.setAttribute("ip",getClientIpAddr(request));
+            session.setAttribute("adminYn", loginService.findAdminYn(memberId));
             session.setMaxInactiveInterval(300);
             return "login/loginSuccess";
         }
@@ -51,7 +74,7 @@ public class LoginController {
         UserDto userDto = new UserDto();
         userDto.setMemberId((String)session.getAttribute("memberId"));
 
-        ModelAndView mv = new ModelAndView("/login/loginSuccess");
+        ModelAndView mv = new ModelAndView("login/loginSuccess");
         mv.addObject("userDto", userDto);
 
         return mv;
@@ -107,4 +130,52 @@ public class LoginController {
             return cnt;
         }
     }
+
+
+    @RequestMapping("/popup")
+    public String Main() throws Exception{
+
+        return "html/popup";
+    }
+
+
+
+
+    @RequestMapping("/findId")
+    public ModelAndView findId(@RequestParam("memberName") String memberName,@RequestParam("memberEmail") String memberEmail) throws Exception{
+        ModelAndView mv = new ModelAndView("html/popupOk");
+
+        UserDto user = loginService.findId(memberName,memberEmail);
+        mv.addObject("user", user);
+        if(user == null){
+            ModelAndView mc = new ModelAndView("html/popFail");
+            return mc;
+        }else {
+            return mv;
+        }
+    }
+
+    @RequestMapping("/popPass")
+    public String Maint() throws Exception{
+
+        return "html/popPass";
+    }
+    @RequestMapping("/popupPassOk")
+    public String Maints() throws Exception{
+
+        return "html/popupPassOk";
+    }
+    @RequestMapping("/findPass")
+    public ModelAndView findPass(@RequestParam("memberName") String memberName,@RequestParam("memberEmail") String memberEmail,@RequestParam("memberId") String memberId) throws Exception{
+            ModelAndView mv = new ModelAndView("html/popupPassOk");
+            UserDto user = loginService.findPass(memberName, memberEmail, memberId);
+            mv.addObject("user", user);
+            if(user == null){
+                ModelAndView mc = new ModelAndView("html/popFail");
+                return mc;
+            }else {
+                return mv;
+            }
+    }
+
 }

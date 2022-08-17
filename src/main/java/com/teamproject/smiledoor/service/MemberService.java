@@ -13,4 +13,12 @@ public interface MemberService {
     int checkid(String memberId) throws Exception;
 
     int idCheck(String memberId);
+
+    UserDto idCall(String memberId)throws Exception;
+
+    void updateInfo(UserDto member)throws Exception;
+
+    void deleteMember(String memberId) throws Exception;
+
+  int emailCheck(String memberEmail);
 }

@@ -10,11 +10,31 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
           crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+  <!--jquery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!--slick-->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
   <script>
     window.addEventListener("DOMContentLoaded", function (){
       var btnReset = document.querySelector("#btn-reset");
       btnReset.addEventListener("click", function (){
         history.back();
+      });
+    });
+    $(document).ready(function() {
+      //slick
+      $('.slider-div').slick({
+        infinite : true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        arrows:false,
+        draggable: true,
       });
     });
   </script>
@@ -23,9 +43,11 @@
 <body>
 
 <header class="container">
-  <div class="mt-4 p-5 bg-secondary bg-opacity-75 text-white rounded text-center">
-    <h1>부트스트랩을 사용한 게시판 만들기</h1>
-    <h3>글쓰기</h3>
+  <!--slick-->
+  <div class="slider-div"  >
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/vintage-g0491af600_1920.jpg" style="width:100%; height:250px;"></a></div>
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/banner-ga8c6de769_1920.jpg" style="width:100%; height:250px;"></a></div>
+    <div class="slick_list"><a href="/Main"><img class="image" src="/images/banner-g40a784e09_1920.jpg" style="width:100%; height:250px;"></a></div>
   </div>
 </header>
 
@@ -38,9 +60,19 @@
             <label for="boardTitle" class="form-label">제목 : </label>
             <input type="text" class="form-control" id="boardTitle" name="boardTitle" placeholder="제목을 입력하세요">
           </div>
-          <div class="my-3">
-            <label for="member-id"  class="form-label">사용자 ID : </label>
-            <input th:value="${user.getMemberId()}" readonly="true" class="form-control" id="member-id" name="memberId">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="my-3">
+                <label for="member-id"  class="form-label">사용자 ID : </label>
+                <input th:value="${user.getMemberId()}" readonly="true" class="form-control" id="member-id" name="memberId">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="my-3">
+                <label for="member-id"  class="form-label">IP : </label>
+                <input type="text" class="form-control" readonly name="ip" th:value="${session.ip}">
+              </div>
+            </div>
           </div>
           <div class="my-3">
             <label for="boardContent" class="form-label">내용 : </label>

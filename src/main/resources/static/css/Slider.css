@@ -21,10 +21,13 @@
     color: white;
     text-decoration: none;
 }
-#login:hover>a{
+#Slider:hover #login>a{
     color: black;
 }
-
+.logo>a{
+    text-decoration: none;
+    color: white;
+}
 
 
 .logo{
@@ -38,7 +41,6 @@
     line-height: 25px;
     letter-spacing: normal;
     padding: 1.3rem 1rem;
-    color: white;
     text-decoration: none;
 }
 
@@ -85,13 +87,17 @@
     background-color: white;
     transition: background-color 1s ease-in-out;
 }
+#Slider:hover .logo>a{
+    color: black;
+}
+
 #Slider:hover .link{
     color: black;
 }
 #Slider:hover .logo{
     color: black;
 }
-.link>ul>li{
+.link>ul>a{
     color: black;
     transition: color 5s ease-in-out;
 }
@@ -101,11 +107,13 @@
     margin: 0px;
 }
 
-.nav-item>ul>li{
+.nav-item>ul>a{
     text-align: center;
-
+    text-decoration: none;
     display: none;
     font-weight: 900;
+    color: #000;
+    transition: color 5s ease-in-out;
 }
 
 
@@ -114,7 +122,7 @@
     padding: 0;
 }
 
-#Slider:hover .nav-item>ul>li{
+#Slider:hover .nav-item>ul>a{
     display: block;
 }
 #Slider:hover .hr{

@@ -36,4 +36,34 @@
         SELECT COUNT(member_id) FROM member WHERE member_id= #{memberId}
     </select>
 
+    <select id="idCall" parameterType="String" resultType="com.teamproject.smiledoor.dto.UserDto">
+        <![CDATA[
+        SELECT
+            member_id, member_pw, member_name, member_email, birth_day, phone
+        FROM
+            member
+        WHERE
+            member_id= #{memberId}
+
+        ]]>
+    </select>
+
+    <update id="updateInfo" parameterType="com.teamproject.smiledoor.dto.UserDto">
+    <![CDATA[
+        UPDATE member
+        SET  member_pw = #{memberPw}, member_name = #{memberName}, member_email = #{memberEmail} , birth_day = #{birthDay} , phone = #{phone}
+        WHERE member_id = #{memberId}
+        ]]>
+    </update>
+
+    <delete id="deleteMember" parameterType="String">
+        <![CDATA[
+        DELETE FROM member
+        WHERE member_id= #{memberId}
+        ]]>
+    </delete>
+
+    <select id="emailCheck" parameterType="String" resultType="int">
+        SELECT COUNT(member_email) FROM member WHERE member_email= #{memberEmail}
+    </select>
 </mapper>

@@ -19,7 +19,7 @@ public class MemberController {
     //회원 전체 목록 출력
     @RequestMapping("/memberlist")
     public ModelAndView memberList() throws Exception {
-        ModelAndView mv = new ModelAndView("/member/memberList");
+        ModelAndView mv = new ModelAndView("member/memberList");
         List<UserDto> dataList = memberService.selectUserList();
         mv.addObject("dataList", dataList);
         return mv;
@@ -27,14 +27,14 @@ public class MemberController {
     //회원가입 입력 화면을 보여주는 역할
     @RequestMapping("/registerMemberForm")
     public String registerMemberForm() throws Exception {
-        return "/member/memberForm";
+        return "member/memberForm";
     }
     // user정보를 database에 저장해주는 역할
     @RequestMapping("/join")
     public String joinMember(UserDto userDto) throws Exception {
 //        System.out.print(userDto);
         memberService.joinMember(userDto);
-        return "/member/joinSuccess";
+        return "member/joinSuccess";
     }
 
     @PostMapping("/idCheck")
@@ -46,4 +46,21 @@ public class MemberController {
 //        logger.info("확인 결과:"+cnt);
         return cnt;
     }
+
+    @RequestMapping("/deleteMember")
+    public String deleteMember(@RequestParam("memberId") String memberId) throws Exception {
+        memberService.deleteMember(memberId);
+        return "redirect:/memberlist";
+    }
+
+    @PostMapping("/emailCheck")
+    @ResponseBody
+    public int emailCheck(@RequestParam("memberEmail") String memberEmail){
+
+        int cnt1 = memberService.emailCheck(memberEmail);
+
+        return cnt1;
+    }
+
+
 }

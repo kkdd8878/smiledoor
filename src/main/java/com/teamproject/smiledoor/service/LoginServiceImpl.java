@@ -11,7 +11,7 @@ import java.util.List;
 public class LoginServiceImpl implements LoginService{
 
     @Autowired
-    LoginMapper loginMapper;
+    private LoginMapper loginMapper;
 
     @Override
     public int selectUserInfoYn(String memberId, String memberPw) throws Exception {
@@ -22,6 +22,22 @@ public class LoginServiceImpl implements LoginService{
     public UserDto enrollMembership(String memberId) throws Exception {
         UserDto userDto = loginMapper.enrollMembership(memberId);
         return userDto;
+    }
+
+    @Override
+    public UserDto findId(String memberName, String memberEmail) throws Exception {
+        return loginMapper.findId(memberName,memberEmail);
+    }
+
+
+    @Override
+    public String findAdminYn(String memberId) throws Exception {
+        return loginMapper.findAdminYn(memberId);
+    }
+
+    @Override
+    public UserDto findPass(String memberName, String memberEmail, String memberId) throws Exception {
+        return loginMapper.findPass(memberName,memberEmail,memberId);
     }
 
 

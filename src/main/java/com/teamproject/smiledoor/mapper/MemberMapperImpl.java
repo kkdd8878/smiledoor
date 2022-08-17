@@ -37,4 +37,25 @@ public class MemberMapperImpl implements MemberMapper{
         int cnt = sqlSession.selectOne(NAMESPACE+".idCheck", memberId);
         return cnt;
     }
+
+    @Override
+    public UserDto idCall(String memberId) {
+        return null;
+    }
+
+    @Override
+    public void updateInfo(UserDto member) throws Exception {
+
+    }
+
+    @Override
+    public void deleteMember(String memberId) throws Exception {
+
+    }
+
+    @Override
+    public int emailCheck(String memberEmail){
+        int cnt1 = sqlSession.selectOne(NAMESPACE+".emailCheck", memberEmail);
+        return cnt1;
+    }
 }

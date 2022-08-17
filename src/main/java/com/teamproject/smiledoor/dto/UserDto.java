@@ -11,4 +11,6 @@ public class UserDto {
     private String birthDay;
     private String phone;
     private String regDate;
+    private String adminYn;
+
 }

@@ -1,17 +1,21 @@
 package com.teamproject.smiledoor.controller;
 
 
+import com.github.pagehelper.PageInfo;
 import com.teamproject.smiledoor.dto.BoardDto;
 import com.teamproject.smiledoor.dto.BoardFileDto;
+import com.teamproject.smiledoor.dto.CommentDto;
 import com.teamproject.smiledoor.dto.UserDto;
 import com.teamproject.smiledoor.service.BoardService;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,12 +34,18 @@ public class BoardController {
 
     //자유게시판
     @RequestMapping("/board/boardList")
-    public ModelAndView openBoardList() throws Exception{
-        ModelAndView mv = new ModelAndView("/board/boardList");
+    public ModelAndView openBoardList(@RequestParam(required = false, defaultValue = "1") int pageNum, HttpServletRequest request) throws Exception{
+        ModelAndView mv = new ModelAndView("board/boardList");
 
-        List<BoardDto> dataList = boardService.selectBoardList();
+        UserDto user = new UserDto();
+        HttpSession session = request.getSession();
+        user.setMemberId((String) session.getAttribute("memberId"));
 
-        mv.addObject("dataList", dataList);
+        mv.addObject("user",user);
+
+        PageInfo<BoardDto> boardListPage = new PageInfo<>(boardService.getBoardListPage(pageNum), 10);
+
+        mv.addObject("dataList", boardListPage);
 
         return mv;
     }
@@ -43,11 +53,11 @@ public class BoardController {
     //자유게시판 글쓰기
     @RequestMapping("/board/WriteBoard")
     public ModelAndView writeBoard(HttpServletRequest request) throws Exception{
-        ModelAndView mv = new ModelAndView("/board/boardWrite");
+        ModelAndView mv = new ModelAndView("board/boardWrite");
 
         HttpSession session = request.getSession();
 
-        UserDto user = new UserDto(); // 아마도 로그인 서비스 생기면 UserDto 로 변경하면됨 변수도 그걸로
+        UserDto user = new UserDto();
         user.setMemberId((String) session.getAttribute("memberId"));
         mv.addObject("user", user);
 
@@ -61,9 +71,14 @@ public class BoardController {
     }
 
     @RequestMapping("/board/boardDetail")
-    public ModelAndView boardDetail(@RequestParam("boardNum") int boardNum) throws Exception{
-        ModelAndView mv = new ModelAndView("/board/boardDetail");
+    public ModelAndView boardDetail(@RequestParam("boardNum") int boardNum,HttpServletRequest request) throws Exception{
+        ModelAndView mv = new ModelAndView("board/boardDetail");
+        HttpSession session = request.getSession();
 
+        UserDto user = new UserDto();
+        user.setMemberId((String) session.getAttribute("memberId"));
+        mv.addObject("user", user);
+        
         BoardDto board = boardService.selectBoardDetail(boardNum);
         mv.addObject("board",board);
 
@@ -71,8 +86,8 @@ public class BoardController {
     }
 
     @RequestMapping("/board/updateBoard")
-    public String updateBoard(BoardDto board) throws Exception {
-        boardService.updateBoard(board);
+    public String updateBoard(BoardDto board, MultipartHttpServletRequest multiUploadFiles) throws Exception {
+        boardService.updateBoard(board, multiUploadFiles);
         return  "redirect:/board/boardList";
     }
 
@@ -101,6 +116,29 @@ public class BoardController {
             response.getOutputStream().flush();
             response.getOutputStream().close();
         }
+    }
+
+    @RequestMapping("board/deleteBoardFile")
+    public String deleteBoardFile(@RequestParam int idx, @RequestParam int boardNum) throws Exception {
+        boardService.deleteBoardFile(idx, boardNum);
+
+        return "redirect:/board/boardDetail?boardNum="+boardNum;
+    }
+
+
+    @RequestMapping("/comment/insertComment")
+    public String insertComment(CommentDto comment,HttpServletRequest request) throws Exception{
+        boardService.insertComment(comment);
+        String referer= request.getHeader("Referer"); // 헤더에서 이전 페이지를 읽는다.
+        return "redirect:"+ referer; // 이전 페이지로 리다이렉트
+    }
+
+
+    @RequestMapping("/comment/insert2Comment")
+    public String insert2Comment(CommentDto comment,HttpServletRequest request) throws Exception{
+        boardService.insert2Comment(comment);
+        String referer= request.getHeader("Referer"); // 헤더에서 이전 페이지를 읽는다.
+        return "redirect:"+ referer; // 이전 페이지로 리다이렉트
     }
 
 }
